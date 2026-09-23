@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="login-wrap">
+    <div class="card login-card">
+        <h1>Sign in</h1>
+        <p class="muted">Use your hospital staff account.</p>
+
+        <form method="POST" action="/login">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" autocomplete="username" required>
+
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" autocomplete="current-password" required>
+
+            <button type="submit" class="btn btn-primary btn-block">Sign in</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

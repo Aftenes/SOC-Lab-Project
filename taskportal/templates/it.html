@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>IT panel</h1>
+<p class="muted">Support tickets and system activity. IT does not have access to clinical patient records.</p>
+
+<div class="card">
+    <h3>Open tickets</h3>
+    {% if tickets %}
+    <table class="data-table">
+        <thead><tr><th>Title</th><th>Requested by</th><th>Status</th></tr></thead>
+        <tbody>
+        {% for t in tickets %}
+            <tr>
+                <td><strong>{{ t.title }}</strong><br><span class="muted">{{ t.description }}</span></td>
+                <td>{{ t.requested_by }}</td>
+                <td><span class="status status-{{ t.status }}">{{ t.status.replace('_', ' ') }}</span></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="muted">No open tickets.</p>
+    {% endif %}
+</div>
+
+<div class="card">
+    <h3>System logs</h3>
+    <p class="muted">Live app events. This is the same stream Wazuh ingests from <code>app.log</code>.</p>
+    <table class="data-table log-table">
+        <thead><tr><th>Time</th><th>User</th><th>Action</th><th>Details</th></tr></thead>
+        <tbody>
+        {% for l in logs %}
+            <tr class="{{ 'log-alert' if l.action in ['login_failed', 'access_denied', 'role_self_assigned', 'filex_accessed'] else '' }}">
+                <td><code>{{ l.timestamp }}</code></td>
+                <td>{{ l.username or '—' }}</td>
+                <td>{{ l.action }}</td>
+                <td class="muted">{{ l.details }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

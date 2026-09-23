@@ -1,0 +1,4 @@
+2026-09-23T13:39:21.186360 | user=jchen | role=employee | ip=172.21.165.194 | action=login_success | details=
+2026-09-23T13:39:47.178846 | user=jchen | role=employee | ip=172.21.165.194 | action=logout | details=
+2026-09-23T13:40:02.589535 | user=admin | role=manager | ip=172.21.165.194 | action=login_success | details=
+2026-09-23T13:40:43.452849 | user=admin | role=manager | ip=172.21.165.194 | action=patient_reassigned | details=patient_id=3 doctor_id=3

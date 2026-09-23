@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>File X</h1>
+<p class="muted">Restricted data store.</p>
+
+{% for f in files %}
+<div class="card">
+    <h3>{{ f.filename }}</h3>
+    <p class="muted">Added {{ f.created_at }}</p>
+    <pre class="filex-content">{{ f.content }}</pre>
+</div>
+{% endfor %}
+
+{% endblock %}

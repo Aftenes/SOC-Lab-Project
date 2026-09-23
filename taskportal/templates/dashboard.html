@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>Dashboard</h1>
+<p class="muted">Welcome back, {{ session.get('full_name') }}.</p>
+
+<!-- ================= EMPLOYEE (doctor / nurse) ================= -->
+{% if role == "employee" %}
+
+<div class="card">
+    <h3>Your patients</h3>
+    {% if patients %}
+    <table class="data-table">
+        <thead>
+            <tr><th>Name</th><th>DOB</th><th>Condition</th><th>Last checkup</th></tr>
+        </thead>
+        <tbody>
+        {% for p in patients %}
+            <tr>
+                <td>{{ p.name }}</td>
+                <td>{{ p.dob }}</td>
+                <td>{{ p.condition }}</td>
+                <td>{{ p.last_checkup }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="muted">No patients assigned to you yet.</p>
+    {% endif %}
+</div>
+
+<div class="card">
+    <h3>Tasks for today</h3>
+    {% if tasks %}
+    <ul class="task-list">
+        {% for t in tasks %}
+        <li>
+            <div>
+                <strong>{{ t.title }}</strong>
+                <span class="status status-{{ t.status }}">{{ t.status.replace('_', ' ') }}</span>
+                <p class="muted">{{ t.description }}</p>
+            </div>
+            <form method="POST" action="/tasks/{{ t.id }}/complete">
+                <button type="submit" class="btn btn-small">Mark done</button>
+            </form>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p class="muted">You're all caught up.</p>
+    {% endif %}
+</div>
+
+{% endif %}
+
+<!-- ================= MANAGER (administrator) ================= -->
+{% if role == "manager" %}
+
+<div class="stat-row">
+    <div class="card stat"><span class="stat-num">{{ patient_count }}</span><span class="stat-label">Patients</span></div>
+    <div class="card stat"><span class="stat-num">{{ staff_count }}</span><span class="stat-label">Clinical staff</span></div>
+    <div class="card stat"><span class="stat-num">{{ open_tasks }}</span><span class="stat-label">Open tasks</span></div>
+</div>
+
+<div class="card">
+    <h3>Administrator tools</h3>
+    <p>Assign patients to doctors, manage staff, and create tasks.</p>
+    <a href="/admin" class="btn btn-primary">Open admin panel</a>
+    <a href="/tasks" class="btn">Manage tasks</a>
+</div>
+
+{% endif %}
+
+<!-- ================= IT SPECIALIST ================= -->
+{% if role == "it" %}
+
+<div class="stat-row">
+    <div class="card stat"><span class="stat-num">{{ open_tickets }}</span><span class="stat-label">Open tickets</span></div>
+</div>
+
+<div class="card">
+    <h3>System tools</h3>
+    <p>Review support tickets and monitor recent system activity.</p>
+    <a href="/it" class="btn btn-primary">Open IT panel</a>
+</div>
+
+<div class="card">
+    <h3>Latest activity</h3>
+    {% if recent_logs %}
+    <ul class="log-list">
+        {% for l in recent_logs %}
+        <li><code>{{ l.timestamp }}</code> — {{ l.action }} {% if l.details %}<span class="muted">({{ l.details }})</span>{% endif %}</li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p class="muted">No recent activity.</p>
+    {% endif %}
+</div>
+
+{% endif %}
+
+{% endblock %}

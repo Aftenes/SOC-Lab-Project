@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ title or "TaskPortal" }}</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+    <header class="topbar">
+        <h2 class="taskportal">TaskPortal <span class="hospital-tag">St. Aldric Hospital</span></h2>
+        {% if session.get('username') %}
+        <div class="topbar-user">
+            <span class="role-badge role-{{ session.get('role') }}">{{ session.get('role') }}</span>
+            <span class="topbar-name">{{ session.get('full_name') }}</span>
+            <a href="/logout" class="logout-link">Log out</a>
+        </div>
+        {% endif %}
+    </header>
+
+    {% if session.get('username') %}
+    <nav class="sidebar">
+        <a href="/dashboard" class="{{ 'active' if request.path == '/dashboard' else '' }}">Dashboard</a>
+        {% if session.get('role') in ['employee', 'manager'] %}
+        <a href="/tasks" class="{{ 'active' if request.path == '/tasks' else '' }}">Tasks</a>
+        {% endif %}
+        {% if session.get('role') == 'manager' %}
+        <a href="/admin" class="{{ 'active' if request.path == '/admin' else '' }}">Admin</a>
+        {% endif %}
+        {% if session.get('role') == 'it' %}
+        <a href="/it" class="{{ 'active' if request.path == '/it' else '' }}">IT Panel</a>
+        <a href="/filex" class="{{ 'active' if request.path == '/filex' else '' }}">File X</a>
+        {% endif %}
+    </nav>
+    {% endif %}
+
+    <main class="content{{ '' if session.get('username') else ' content-full' }}">
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <div class="flash">{{ messages[0] }}</div>
+          {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+    </main>
+
+</body>
+</html>

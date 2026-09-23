@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>Admin panel</h1>
+<p class="muted">Manage staff, patients, and assignments.</p>
+
+<div class="card">
+    <h3>Add a patient</h3>
+    <form method="POST" action="/admin/patients/new" class="form-grid">
+        <div><label>Name</label><input type="text" name="name" required></div>
+        <div><label>Date of birth</label><input type="date" name="dob"></div>
+        <div class="span-2"><label>Condition</label><input type="text" name="condition"></div>
+        <div>
+            <label>Assign doctor</label>
+            <select name="assigned_doctor_id">
+                <option value="">Unassigned</option>
+                {% for d in doctors %}<option value="{{ d.id }}">{{ d.full_name }}</option>{% endfor %}
+            </select>
+        </div>
+        <div><button type="submit" class="btn btn-primary">Add patient</button></div>
+    </form>
+</div>
+
+<div class="card">
+    <h3>Patients</h3>
+    <table class="data-table">
+        <thead>
+            <tr><th>Name</th><th>Condition</th><th>Last checkup</th><th>Assigned doctor</th><th>Reassign</th></tr>
+        </thead>
+        <tbody>
+        {% for p in patients %}
+            <tr>
+                <td>{{ p.name }}</td>
+                <td>{{ p.condition }}</td>
+                <td>{{ p.last_checkup }}</td>
+                <td>{{ p.doctor_name or 'Unassigned' }}</td>
+                <td>
+                    <form method="POST" action="/admin/patients/{{ p.id }}/assign" class="inline-form">
+                        <select name="assigned_doctor_id">
+                            {% for d in doctors %}
+                            <option value="{{ d.id }}" {{ 'selected' if d.id == p.assigned_doctor_id else '' }}>{{ d.full_name }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit" class="btn btn-small">Save</button>
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="card">
+    <h3>Staff directory</h3>
+    <table class="data-table">
+        <thead><tr><th>Name</th><th>Username</th><th>Role</th></tr></thead>
+        <tbody>
+        {% for s in staff %}
+            <tr>
+                <td>{{ s.full_name }}</td>
+                <td>{{ s.username }}</td>
+                <td><span class="role-badge role-{{ s.role }}">{{ s.role }}</span></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

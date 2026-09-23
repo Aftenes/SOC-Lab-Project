@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>Tasks</h1>
+
+{% if role == "manager" %}
+<div class="card">
+    <h3>Assign a new task</h3>
+    <form method="POST" action="/tasks/new" class="form-grid">
+        <div>
+            <label>Title</label>
+            <input type="text" name="title" required>
+        </div>
+        <div>
+            <label>Assign to</label>
+            <select name="assigned_to" required>
+                {% for s in staff %}<option value="{{ s.id }}">{{ s.full_name }}</option>{% endfor %}
+            </select>
+        </div>
+        <div>
+            <label>Patient (optional)</label>
+            <select name="patient_id">
+                <option value="">—</option>
+                {% for p in patients %}<option value="{{ p.id }}">{{ p.name }}</option>{% endfor %}
+            </select>
+        </div>
+        <div class="span-2">
+            <label>Description</label>
+            <input type="text" name="description">
+        </div>
+        <div><button type="submit" class="btn btn-primary">Create task</button></div>
+    </form>
+</div>
+{% endif %}
+
+<div class="card">
+    <h3>{{ 'All tasks' if role == 'manager' else 'Your tasks' }}</h3>
+    {% if tasks %}
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                {% if role == 'manager' %}<th>Assignee</th>{% endif %}
+                <th>Patient</th><th>Status</th><th></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for t in tasks %}
+            <tr>
+                <td><strong>{{ t.title }}</strong><br><span class="muted">{{ t.description }}</span></td>
+                {% if role == 'manager' %}<td>{{ t.assignee }}</td>{% endif %}
+                <td>{{ t.patient_name or '—' }}</td>
+                <td><span class="status status-{{ t.status }}">{{ t.status.replace('_', ' ') }}</span></td>
+                <td>
+                    {% if t.status != 'completed' %}
+                    <form method="POST" action="/tasks/{{ t.id }}/complete">
+                        <button type="submit" class="btn btn-small">Mark done</button>
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="muted">No tasks to show.</p>
+    {% endif %}
+</div>
+
+{% endblock %}
